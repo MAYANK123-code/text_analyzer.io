@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Text Analyzer</title>
+        <meta charset="utf-8">
+        <meta name="description" content="Solution to Text Analyzer for Thinkful 3.1">
+      
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
+        <link rel="stylesheet" type="text/css" href="main.css">
+    <style>
+
+* {
+  box-sizing: border-box
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #87ceeb;
+}
+
+.container {
+  padding: 30px;
+  background: #87ceeb;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.text-report dt:after {
+  content: ": ";
+}
+
+textarea {
+	background: silver;
+}
+
+button {
+  color: black;
+  width: 150px;
+  height: 40px;
+}
+
+button:hover {
+  background: black;
+  color: silver;
+}
+
+h1 {
+  text-align: center;
+}
+    </style>  
+    
+    
+    </head>
+      
+      <body>
+        <div class="container">
+          <main>
+            <h1>Text Analzyer</h1>
+            <form class="js-txt-form">
+              <div>
+                <textarea cols="115" rows="20" id="user-text" name="user-text" placeholder="Here is where you can paste/enter the text that you would like analyzed." required></textarea>
+              </div>
+              <br>
+              <div>
+                <button type="submit">Analyze it!</button>
+              </div>
+            </form>
+      
+            <dl class="hidden text-report js-txt-report">
+              <dt>Word count</dt>
+              <dd class="js-word-count"></dd>
+      
+              <dt>Unique word count</dt>
+              <dd class="js-unique-word-count"></dd>
+      
+              <dt>Average word length</dt>
+              <dd class="js-average-word-length"></dd>
+            </dl>
+          </main>
+        </div>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="app.js">
+        
+        function getAverageWordLength(tokens) {
+   var totalLength = tokens.join("").length;
+  return (totalLength / tokens.length).toFixed(2);
+}
+
+function countDistinctWords(tokens) {
+  var distinctWords = [];
+  for (var i=0; i<tokens.length; i++) {
+    if (distinctWords.indexOf(tokens[i]) === -1){
+      distinctWords.push(tokens[i]);
+    }
+  }
+  return distinctWords.length;
+}
+
+function tokenizeText(text) {
+  return text.toLowerCase().match(/\b[^\s]+\b/g).sort();
+}
+
+function removeReturns(text) {
+  return text.replace(/\r?\n|\r/g, "");
+}
+
+function reportOnText(text) {
+  var tokens = tokenizeText(text);
+  var numDistinctWords = countDistinctWords(tokens);
+  var numTotalWords = tokens.length;
+  var averageWordLength = getAverageWordLength(tokens);
+  var textReport = $('.js-txt-report');
+  textReport.find('.js-unique-word-count').text(numDistinctWords);
+  textReport.find('.js-word-count').text(numTotalWords);
+  textReport.find('.js-average-word-length').text(
+    averageWordLength + " characters");
+  textReport.removeClass('hidden');
+}
+
+function watchFormSubmissions() {
+  $('.js-txt-form').submit(function(event) {
+    event.preventDefault();
+    var userText = $(this).find('#user-text').val();
+    reportOnText(removeReturns(userText));
+  });
+}
+
+$(function() {
+  watchFormSubmissions();
+});        
+        
+        </script>
+      
+      </body>
+</html>
